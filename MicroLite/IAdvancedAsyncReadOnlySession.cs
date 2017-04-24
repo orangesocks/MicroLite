@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="IAdvancedAsyncReadOnlySession.cs" company="MicroLite">
-// Copyright 2012 - 2015 Project Contributors
+// Copyright 2012 - 2016 Project Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,6 @@
 // -----------------------------------------------------------------------
 namespace MicroLite
 {
-#if NET_4_5
-
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -41,6 +39,4 @@ namespace MicroLite
         /// <returns>A task representing the asynchronous operation.</returns>
         Task ExecutePendingQueriesAsync(CancellationToken cancellationToken);
     }
-
-#endif
 }

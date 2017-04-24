@@ -17,8 +17,7 @@
         [Fact]
         public void BuildSelectInsertIdSqlQueryForIdentifierStrategyAssigned()
         {
-            ObjectInfo.MappingConvention = new ConventionMappingConvention(
-                UnitTest.GetConventionMappingSettings(IdentifierStrategy.Assigned));
+            UnitTest.SetConventionMapping(IdentifierStrategy.Assigned);
 
             var sqlDialect = new MsSql2005Dialect();
 
@@ -31,8 +30,7 @@
         [Fact]
         public void BuildSelectInsertIdSqlQueryForIdentifierStrategyDbGenerated()
         {
-            ObjectInfo.MappingConvention = new ConventionMappingConvention(
-                UnitTest.GetConventionMappingSettings(IdentifierStrategy.DbGenerated));
+            UnitTest.SetConventionMapping(IdentifierStrategy.DbGenerated);
 
             var sqlDialect = new MsSql2005Dialect();
 
@@ -45,8 +43,7 @@
         [Fact]
         public void InsertInstanceQueryForIdentifierStrategyAssigned()
         {
-            ObjectInfo.MappingConvention = new ConventionMappingConvention(
-                UnitTest.GetConventionMappingSettings(IdentifierStrategy.Assigned));
+            UnitTest.SetConventionMapping(IdentifierStrategy.Assigned);
 
             var sqlDialect = new MsSql2005Dialect();
 
@@ -67,13 +64,13 @@
             Assert.Equal("INSERT INTO [Sales].[Customers] ([Created],[CreditLimit],[DateOfBirth],[Id],[Name],[CustomerStatusId],[Website]) VALUES (@p0,@p1,@p2,@p3,@p4,@p5,@p6)", sqlQuery.CommandText);
             Assert.Equal(7, sqlQuery.Arguments.Count);
 
-            Assert.Equal(DbType.DateTime, sqlQuery.Arguments[0].DbType);
+            Assert.Equal(DbType.DateTime2, sqlQuery.Arguments[0].DbType);
             Assert.Equal(customer.Created, sqlQuery.Arguments[0].Value);
 
             Assert.Equal(DbType.Decimal, sqlQuery.Arguments[1].DbType);
             Assert.Equal(customer.CreditLimit, sqlQuery.Arguments[1].Value);
 
-            Assert.Equal(DbType.DateTime, sqlQuery.Arguments[2].DbType);
+            Assert.Equal(DbType.DateTime2, sqlQuery.Arguments[2].DbType);
             Assert.Equal(customer.DateOfBirth, sqlQuery.Arguments[2].Value);
 
             Assert.Equal(DbType.Int32, sqlQuery.Arguments[3].DbType);
@@ -92,8 +89,7 @@
         [Fact]
         public void InsertInstanceQueryForIdentifierStrategyDbGenerated()
         {
-            ObjectInfo.MappingConvention = new ConventionMappingConvention(
-                UnitTest.GetConventionMappingSettings(IdentifierStrategy.DbGenerated));
+            UnitTest.SetConventionMapping(IdentifierStrategy.DbGenerated);
 
             var sqlDialect = new MsSql2005Dialect();
 
@@ -113,13 +109,13 @@
             Assert.Equal("INSERT INTO [Sales].[Customers] ([Created],[CreditLimit],[DateOfBirth],[Name],[CustomerStatusId],[Website]) VALUES (@p0,@p1,@p2,@p3,@p4,@p5)", sqlQuery.CommandText);
             Assert.Equal(6, sqlQuery.Arguments.Count);
 
-            Assert.Equal(DbType.DateTime, sqlQuery.Arguments[0].DbType);
+            Assert.Equal(DbType.DateTime2, sqlQuery.Arguments[0].DbType);
             Assert.Equal(customer.Created, sqlQuery.Arguments[0].Value);
 
             Assert.Equal(DbType.Decimal, sqlQuery.Arguments[1].DbType);
             Assert.Equal(customer.CreditLimit, sqlQuery.Arguments[1].Value);
 
-            Assert.Equal(DbType.DateTime, sqlQuery.Arguments[2].DbType);
+            Assert.Equal(DbType.DateTime2, sqlQuery.Arguments[2].DbType);
             Assert.Equal(customer.DateOfBirth, sqlQuery.Arguments[2].Value);
 
             Assert.Equal(DbType.String, sqlQuery.Arguments[3].DbType);
@@ -448,8 +444,7 @@ ORDER BY
         [Fact]
         public void UpdateInstanceQuery()
         {
-            ObjectInfo.MappingConvention = new ConventionMappingConvention(
-                UnitTest.GetConventionMappingSettings(IdentifierStrategy.Assigned));
+            UnitTest.SetConventionMapping(IdentifierStrategy.Assigned);
 
             var sqlDialect = new MsSql2005Dialect();
 
@@ -473,7 +468,7 @@ ORDER BY
             Assert.Equal(DbType.Decimal, sqlQuery.Arguments[0].DbType);
             Assert.Equal(customer.CreditLimit, sqlQuery.Arguments[0].Value);
 
-            Assert.Equal(DbType.DateTime, sqlQuery.Arguments[1].DbType);
+            Assert.Equal(DbType.DateTime2, sqlQuery.Arguments[1].DbType);
             Assert.Equal(customer.DateOfBirth, sqlQuery.Arguments[1].Value);
 
             Assert.Equal(DbType.String, sqlQuery.Arguments[2].DbType);
@@ -482,7 +477,7 @@ ORDER BY
             Assert.Equal(DbType.Int32, sqlQuery.Arguments[3].DbType);
             Assert.Equal((int)customer.Status, sqlQuery.Arguments[3].Value);
 
-            Assert.Equal(DbType.DateTime, sqlQuery.Arguments[4].DbType);
+            Assert.Equal(DbType.DateTime2, sqlQuery.Arguments[4].DbType);
             Assert.Equal(customer.Updated, sqlQuery.Arguments[4].Value);
 
             Assert.Equal(DbType.String, sqlQuery.Arguments[5].DbType);

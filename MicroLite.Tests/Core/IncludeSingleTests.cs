@@ -15,8 +15,6 @@
     /// </summary>
     public class IncludeSingleTests
     {
-#if NET_4_5
-
         public class WhenBuildValueAsyncHasBeenCalledAndThereAreNoResults
         {
             private IncludeSingle<Customer> include = new IncludeSingle<Customer>();
@@ -118,114 +116,11 @@
             }
         }
 
-#endif
-
-        public class WhenBuildValueHasBeenCalledAndThereAreNoResults
-        {
-            private IncludeSingle<Customer> include = new IncludeSingle<Customer>();
-            private Mock<IDataReader> mockReader = new Mock<IDataReader>();
-
-            public WhenBuildValueHasBeenCalledAndThereAreNoResults()
-            {
-                this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { false }).Dequeue);
-
-                this.include.BuildValue(this.mockReader.Object);
-            }
-
-            [Fact]
-            public void HasValueShouldBeFalse()
-            {
-                Assert.False(this.include.HasValue);
-            }
-
-            [Fact]
-            public void TheDataReaderShouldBeRead()
-            {
-                this.mockReader.VerifyAll();
-            }
-
-            [Fact]
-            public void ValueShouldBeNull()
-            {
-                Assert.Null(this.include.Value);
-            }
-        }
-
-        public class WhenBuildValueHasBeenCalledAndThereIsACallbackRegistered
-        {
-            private bool callbackCalled = false;
-            private IncludeSingle<Customer> include = new IncludeSingle<Customer>();
-            private Mock<IDataReader> mockReader = new Mock<IDataReader>();
-
-            public WhenBuildValueHasBeenCalledAndThereIsACallbackRegistered()
-            {
-                this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { true, false }).Dequeue);
-
-                this.include.OnLoad(inc => callbackCalled = object.ReferenceEquals(inc, this.include));
-                this.include.BuildValue(this.mockReader.Object);
-            }
-
-            [Fact]
-            public void HasValueShouldBeTrue()
-            {
-                Assert.True(this.include.HasValue);
-            }
-
-            [Fact]
-            public void TheCallbackShouldBeCalled()
-            {
-                Assert.True(this.callbackCalled);
-            }
-
-            [Fact]
-            public void TheDataReaderShouldBeRead()
-            {
-                this.mockReader.VerifyAll();
-            }
-
-            [Fact]
-            public void ValueShouldNotBeNull()
-            {
-                Assert.NotNull(this.include.Value);
-            }
-        }
-
-        public class WhenBuildValueHasBeenCalledAndThereIsOneResult
-        {
-            private IncludeSingle<Customer> include = new IncludeSingle<Customer>();
-            private Mock<IDataReader> mockReader = new Mock<IDataReader>();
-
-            public WhenBuildValueHasBeenCalledAndThereIsOneResult()
-            {
-                this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { true, false }).Dequeue);
-
-                this.include.BuildValue(this.mockReader.Object);
-            }
-
-            [Fact]
-            public void HasValueShouldBeTrue()
-            {
-                Assert.True(this.include.HasValue);
-            }
-
-            [Fact]
-            public void TheDataReaderShouldBeRead()
-            {
-                this.mockReader.VerifyAll();
-            }
-
-            [Fact]
-            public void ValueShouldNotBeNull()
-            {
-                Assert.NotNull(this.include.Value);
-            }
-        }
-
-        public class WhenBuildValueHasNotBeenCalled
+        public class WhenBuildValueAsyncHasNotBeenCalled
         {
             private IncludeSingle<Customer> include = new IncludeSingle<Customer>();
 
-            public WhenBuildValueHasNotBeenCalled()
+            public WhenBuildValueAsyncHasNotBeenCalled()
             {
             }
 
@@ -241,28 +136,6 @@
                 Assert.Null(this.include.Value);
             }
         }
-
-        public class WhenCallingBuildValueAndTheDataReaderContainsMultipleResults
-        {
-            private IncludeSingle<Customer> include = new IncludeSingle<Customer>();
-            private Mock<IDataReader> mockReader = new Mock<IDataReader>();
-
-            public WhenCallingBuildValueAndTheDataReaderContainsMultipleResults()
-            {
-                this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { true, true }).Dequeue);
-            }
-
-            [Fact]
-            public void BuildValueShouldThrowAMicroLiteException()
-            {
-                var exception = Assert.Throws<MicroLiteException>(
-                    () => this.include.BuildValue(this.mockReader.Object));
-
-                Assert.Equal(ExceptionMessages.Include_SingleRecordExpected, exception.Message);
-            }
-        }
-
-#if NET_4_5
 
         public class WhenCallingBuildValueAsyncAndTheDataReaderContainsMultipleResults
         {
@@ -275,17 +148,14 @@
             }
 
             [Fact]
-            public void BuildValueAsyncShouldThrowAMicroLiteException()
+            public async void BuildValueAsyncShouldThrowAMicroLiteException()
             {
-                var exception = Assert.Throws<AggregateException>(
-                    () => this.include.BuildValueAsync(new MockDbDataReaderWrapper(this.mockReader.Object), CancellationToken.None).Wait());
+                var exception = await Assert.ThrowsAsync<MicroLiteException>(
+                    async () => await this.include.BuildValueAsync(new MockDbDataReaderWrapper(this.mockReader.Object), CancellationToken.None));
 
-                Assert.IsType<MicroLiteException>(exception.InnerException);
-                Assert.Equal(ExceptionMessages.Include_SingleRecordExpected, exception.InnerException.Message);
+                Assert.Equal(ExceptionMessages.Include_SingleRecordExpected, exception.Message);
             }
         }
-
-#endif
 
         public class WhenTheTypeIsAGuid
         {
@@ -297,7 +167,7 @@
                 this.mockReader.Setup(x => x[0]).Returns(new Guid("97FE0200-8F79-4C3B-8CD4-BE97705868EC"));
                 this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { true, false }).Dequeue);
 
-                this.include.BuildValue(this.mockReader.Object);
+                this.include.BuildValueAsync(new MockDbDataReaderWrapper(this.mockReader.Object), CancellationToken.None).Wait();
             }
 
             [Fact]
@@ -335,7 +205,7 @@
                 this.mockReader.Setup(x => x.GetInt32(0)).Returns(1);
                 this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { true, false }).Dequeue);
 
-                this.include.BuildValue(this.mockReader.Object);
+                this.include.BuildValueAsync(new MockDbDataReaderWrapper(this.mockReader.Object), CancellationToken.None).Wait();
             }
 
             [Fact]
@@ -373,7 +243,7 @@
                 this.mockReader.Setup(x => x.GetString(0)).Returns("<xml><element>text</element></xml>");
                 this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { true, false }).Dequeue);
 
-                this.include.BuildValue(this.mockReader.Object);
+                this.include.BuildValueAsync(new MockDbDataReaderWrapper(this.mockReader.Object), CancellationToken.None).Wait();
             }
 
             [Fact]
@@ -411,7 +281,7 @@
                 this.mockReader.Setup(x => x[0]).Returns("Foo");
                 this.mockReader.Setup(x => x.Read()).Returns(new Queue<bool>(new[] { true, false }).Dequeue);
 
-                this.include.BuildValue(this.mockReader.Object);
+                this.include.BuildValueAsync(new MockDbDataReaderWrapper(this.mockReader.Object), CancellationToken.None).Wait();
             }
 
             [Fact]

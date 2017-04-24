@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ExpandoObjectInfo.cs" company="MicroLite">
-// Copyright 2012 - 2015 Project Contributors
+// Copyright 2012 - 2016 Project Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,6 @@
 // -----------------------------------------------------------------------
 namespace MicroLite.Mapping
 {
-#if !NET_3_5
-
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -46,7 +44,7 @@ namespace MicroLite.Mapping
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             if (log.IsDebug)
@@ -112,6 +110,4 @@ namespace MicroLite.Mapping
             throw new NotSupportedException(ExceptionMessages.ExpandoObjectInfo_NotSupportedReason);
         }
     }
-
-#endif
 }

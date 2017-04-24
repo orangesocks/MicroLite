@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="IncludeMany.cs" company="MicroLite">
-// Copyright 2012 - 2015 Project Contributors
+// Copyright 2012 - 2016 Project Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@ namespace MicroLite.Core
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Data.Common;
     using System.Threading;
+    using System.Threading.Tasks;
     using MicroLite.Mapping;
     using MicroLite.TypeConverters;
 
@@ -28,58 +28,16 @@ namespace MicroLite.Core
     internal sealed class IncludeMany<T> : Include, IIncludeMany<T>
     {
         private static readonly Type resultType = typeof(T);
-        private readonly IList<T> values = new List<T>();
         private Action<IIncludeMany<T>> callback;
 
-        public IList<T> Values
-        {
-            get
-            {
-                return this.values;
-            }
-        }
+        public IList<T> Values { get; } = new List<T>();
 
         public void OnLoad(Action<IIncludeMany<T>> action)
         {
             this.callback = action;
         }
 
-        internal override void BuildValue(IDataReader reader)
-        {
-            if (TypeConverter.IsNotEntityAndConvertible(resultType))
-            {
-                var typeConverter = TypeConverter.For(resultType) ?? TypeConverter.Default;
-
-                while (reader.Read())
-                {
-                    var value = (T)typeConverter.ConvertFromDbValue(reader, 0, resultType);
-
-                    this.values.Add(value);
-                }
-            }
-            else
-            {
-                var objectInfo = ObjectInfo.For(resultType);
-
-                while (reader.Read())
-                {
-                    var instance = (T)objectInfo.CreateInstance(reader);
-
-                    this.values.Add(instance);
-                }
-            }
-
-            this.HasValue = this.values.Count > 0;
-
-            if (this.callback != null)
-            {
-                this.callback(this);
-            }
-        }
-
-#if NET_4_5
-
-        internal override async System.Threading.Tasks.Task BuildValueAsync(DbDataReader reader, CancellationToken cancellationToken)
+        internal override async Task BuildValueAsync(DbDataReader reader, CancellationToken cancellationToken)
         {
             if (TypeConverter.IsNotEntityAndConvertible(resultType))
             {
@@ -89,7 +47,7 @@ namespace MicroLite.Core
                 {
                     var value = (T)typeConverter.ConvertFromDbValue(reader, 0, resultType);
 
-                    this.values.Add(value);
+                    this.Values.Add(value);
                 }
             }
             else
@@ -100,18 +58,13 @@ namespace MicroLite.Core
                 {
                     var instance = (T)objectInfo.CreateInstance(reader);
 
-                    this.values.Add(instance);
+                    this.Values.Add(instance);
                 }
             }
 
-            this.HasValue = this.values.Count > 0;
+            this.HasValue = this.Values.Count > 0;
 
-            if (this.callback != null)
-            {
-                this.callback(this);
-            }
+            this.callback?.Invoke(this);
         }
-
-#endif
     }
 }

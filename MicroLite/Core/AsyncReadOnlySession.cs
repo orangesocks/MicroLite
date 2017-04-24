@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="AsyncReadOnlySession.cs" company="MicroLite">
-// Copyright 2012 - 2015 Project Contributors
+// Copyright 2012 - 2016 Project Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,6 @@
 // -----------------------------------------------------------------------
 namespace MicroLite.Core
 {
-#if NET_4_5
-
     using System;
     using System.Collections.Generic;
     using System.Data.Common;
@@ -124,7 +122,7 @@ namespace MicroLite.Core
 
             if (sqlQuery == null)
             {
-                throw new ArgumentNullException("sqlQuery");
+                throw new ArgumentNullException(nameof(sqlQuery));
             }
 
             var include = new IncludeMany<T>();
@@ -152,7 +150,7 @@ namespace MicroLite.Core
         {
             if (sqlQuery == null)
             {
-                throw new ArgumentNullException("sqlQuery");
+                throw new ArgumentNullException(nameof(sqlQuery));
             }
 
             var include = new IncludeMany<T>();
@@ -167,7 +165,7 @@ namespace MicroLite.Core
         {
             if (sqlQuery == null)
             {
-                throw new ArgumentNullException("sqlQuery");
+                throw new ArgumentNullException(nameof(sqlQuery));
             }
 
             var include = new IncludeScalar<T>();
@@ -182,7 +180,7 @@ namespace MicroLite.Core
         {
             if (identifier == null)
             {
-                throw new ArgumentNullException("identifier");
+                throw new ArgumentNullException(nameof(identifier));
             }
 
             var objectInfo = ObjectInfo.For(typeof(T));
@@ -198,7 +196,7 @@ namespace MicroLite.Core
         {
             if (sqlQuery == null)
             {
-                throw new ArgumentNullException("sqlQuery");
+                throw new ArgumentNullException(nameof(sqlQuery));
             }
 
             var include = new IncludeSingle<T>();
@@ -220,7 +218,7 @@ namespace MicroLite.Core
 
             if (sqlQuery == null)
             {
-                throw new ArgumentNullException("sqlQuery");
+                throw new ArgumentNullException(nameof(sqlQuery));
             }
 
             if (pagingOptions == PagingOptions.None)
@@ -260,7 +258,7 @@ namespace MicroLite.Core
 
             if (identifier == null)
             {
-                throw new ArgumentNullException("identifier");
+                throw new ArgumentNullException(nameof(identifier));
             }
 
             var include = this.Include.Single<T>(identifier);
@@ -281,7 +279,7 @@ namespace MicroLite.Core
 
             if (sqlQuery == null)
             {
-                throw new ArgumentNullException("sqlQuery");
+                throw new ArgumentNullException(nameof(sqlQuery));
             }
 
             var include = new IncludeSingle<T>();
@@ -348,6 +346,4 @@ namespace MicroLite.Core
             while (this.queries.Count > 0);
         }
     }
-
-#endif
 }
