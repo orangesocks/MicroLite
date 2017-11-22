@@ -32,6 +32,6 @@ using Xunit;
 //      Build Number
 //      Revision
 [assembly: AssemblyVersion("6.3.0.0")]
-[assembly: AssemblyFileVersion("6.3.3.0")]
+[assembly: AssemblyFileVersion("6.3.4.0")]
 [assembly: CLSCompliant(true)]
 [assembly: NeutralResourcesLanguageAttribute("en-GB")]
